@@ -1,1 +1,18 @@
-<p>chat works!</p>
+<h2>Ask our assistant</h2>
+
+<div class="messages"> 
+@for (m of messages(); track $index) {
+  <p [class]="m.role">
+    <strong>{{ m.role === 'user' ? 'you' : 'ai' }}:</strong> {{ m.content }}
+  </p>
+}
+  @if (loading()) {
+    <p class="assistant"><em>typing…</em></p>
+  }
+</div>
+
+<input
+  #box
+  placeholder="Type a message and press Enter"
+  (keydown.enter)="send(box.value); box.value = ''"
+/>
