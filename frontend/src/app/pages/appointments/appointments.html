@@ -1,0 +1,15 @@
+<h2>Today's Appointments</h2>
+
+@if (error()) {
+  <p style="color: red">{{ error() }}</p>
+}
+
+<ul>
+  @for (appt of appointments(); track appt.id) {
+    <li>
+      <strong>{{ appt.time }}</strong>: {{ appt.patient }} ({{ appt.treatment }})
+    </li>
+  } @empty {
+    <li>No appointments today.</li>
+  }
+</ul>
