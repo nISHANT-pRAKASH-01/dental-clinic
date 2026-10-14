@@ -41,11 +41,25 @@ const tools: OpenAI.Responses.Tool[] = [
     parameters: { type: 'object', properties: {}, required: [], additionalProperties: false },
     strict: true,
   },
+  {
+    type: 'function',
+    name: 'get_clinic_hours',
+    description: 'Get the clinic opening hours for each day of the week.',
+    parameters: { type: 'object', properties: {}, required: [], additionalProperties: false },
+    strict: true,
+  },
 ];
 
 // Runs the tool the AI asked for
 function runTool(name: string): unknown {
   if (name === 'get_appointments') return appointments;
+  if (name === 'get_clinic_hours') {
+    return {
+      'Monday-Friday': '9:00 AM - 6:00 PM',
+      Saturday: '9:00 AM - 1:00 PM',
+      Sunday: 'Closed',
+    };
+  }
   return { error: `Unknown tool: ${name}` };
 }
 
