@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors'; 
 import OpenAI from 'openai';  
 import { toResponseInputItems } from 'openai/lib/responses/ResponseInputItems';
+import { getAppointments } from './db';
 
 process.loadEnvFile();
 const openai = new OpenAI(); 
@@ -13,16 +14,9 @@ const PORT = 3000;
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:4200' }));
 
-// Our "database" for now: just an array in memory
-const appointments = [
-  { id: 1, patient: 'Rahul Sharma', time: '10:00 AM', treatment: 'Check-up' },
-  { id: 2, patient: 'Priya ', time: '11:30 AM', treatment: 'Filling' },
-  { id: 3, patient: 'Amit Kumar', time: '02:00 PM', treatment: 'Cleaning' },
-];
-
 // A route: when someone sends GET /api/appointments, run this function
 app.get('/api/appointments', (req, res) => {
-  res.json(appointments);
+  res.json(getAppointments());
 });
 
 
@@ -52,7 +46,7 @@ const tools: OpenAI.Responses.Tool[] = [
 
 // Runs the tool the AI asked for
 function runTool(name: string): unknown {
-  if (name === 'get_appointments') return appointments;
+  if (name === 'get_appointments') return getAppointments();
   if (name === 'get_clinic_hours') {
     return {
       'Monday-Friday': '9:00 AM - 6:00 PM',
