@@ -42,3 +42,8 @@ export function addAppointment(patient: string, time: string, treatment: string)
     .run(patient, time, treatment);
   return { id: Number(result.lastInsertRowid), patient, time, treatment };
 }
+
+// Find an appointment at a given time (undefined if the slot is free)
+export function findByTime(time: string): Appointment | undefined {
+  return db.prepare('SELECT * FROM appointments WHERE time = ?').get(time) as Appointment | undefined;
+}

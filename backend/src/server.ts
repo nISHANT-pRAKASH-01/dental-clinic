@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors'; 
 import OpenAI from 'openai';  
 import { toResponseInputItems } from 'openai/lib/responses/ResponseInputItems';
-import { addAppointment, getAppointments } from './db';
+import { addAppointment, findByTime, getAppointments } from './db';
 
 process.loadEnvFile();
 const openai = new OpenAI(); 
@@ -73,6 +73,10 @@ function runTool(name: string, args: Record<string, string>): unknown {
     };
   }
   if (name === 'book_appointment') {
+    // Our code enforces the rule: never double-book a slot
+    if (findByTime(args.time)) {
+      return { error: `The ${args.time} slot is already taken. Please choose another time.` };
+    }
     const booked = addAppointment(args.patient, args.time, args.treatment);
     return { success: true, appointment: booked };
   }
