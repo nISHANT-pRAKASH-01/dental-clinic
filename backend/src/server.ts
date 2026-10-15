@@ -3,6 +3,7 @@ import cors from 'cors';
 import OpenAI from 'openai';  
 import { toResponseInputItems } from 'openai/lib/responses/ResponseInputItems';
 import { addAppointment, findByTime, getAppointments } from './db';
+import { searchKnowledge } from './search';
 
 process.loadEnvFile();
 const openai = new OpenAI(); 
@@ -60,6 +61,23 @@ const tools: OpenAI.Responses.Tool[] = [
     },
     strict: true,
   },
+  {
+    type: 'function',
+    name: 'search_clinic_info',
+    description:
+      'Search the clinic information: prices, payment, insurance, cancellation policy, location, ' +
+      'parking, aftercare instructions, children and emergencies. Use this before answering any ' +
+      'question about the clinic.',
+    parameters: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'What to search for, e.g. "whitening price"' },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
+    strict: true,
+  },
 ];
 
 // Runs the tool the AI asked for
@@ -79,6 +97,12 @@ function runTool(name: string, args: Record<string, string>): unknown {
     }
     const booked = addAppointment(args.patient, args.time, args.treatment);
     return { success: true, appointment: booked };
+  }
+  if (name === 'search_clinic_info') {
+    const results = searchKnowledge(args.query);
+    console.log(`   🔎 search "${args.query}" → ${results.length} chunk(s)`);
+    if (results.length === 0) return { results: [], note: 'Nothing found. Do not guess; suggest calling the clinic.' };
+    return { results };
   }
   return { error: `Unknown tool: ${name}` };
 }
