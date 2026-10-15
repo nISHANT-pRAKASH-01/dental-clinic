@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors'; 
 import OpenAI from 'openai';  
 import { toResponseInputItems } from 'openai/lib/responses/ResponseInputItems';
-import { getAppointments } from './db';
+import { addAppointment, getAppointments } from './db';
 
 process.loadEnvFile();
 const openai = new OpenAI(); 
@@ -42,10 +42,28 @@ const tools: OpenAI.Responses.Tool[] = [
     parameters: { type: 'object', properties: {}, required: [], additionalProperties: false },
     strict: true,
   },
+  {
+    type: 'function',
+    name: 'book_appointment',
+    description:
+      'Book an appointment for today. Only call this after the patient has given their name, ' +
+      'the time and the treatment, and has confirmed they want to book.',
+    parameters: {
+      type: 'object',
+      properties: {
+        patient: { type: 'string', description: "The patient's full name" },
+        time: { type: 'string', description: 'Time of day, formatted like "04:00 PM"' },
+        treatment: { type: 'string', description: 'e.g. Check-up, Cleaning, Filling' },
+      },
+      required: ['patient', 'time', 'treatment'],
+      additionalProperties: false,
+    },
+    strict: true,
+  },
 ];
 
 // Runs the tool the AI asked for
-function runTool(name: string): unknown {
+function runTool(name: string, args: Record<string, string>): unknown {
   if (name === 'get_appointments') return getAppointments();
   if (name === 'get_clinic_hours') {
     return {
@@ -53,6 +71,10 @@ function runTool(name: string): unknown {
       Saturday: '9:00 AM - 1:00 PM',
       Sunday: 'Closed',
     };
+  }
+  if (name === 'book_appointment') {
+    const booked = addAppointment(args.patient, args.time, args.treatment);
+    return { success: true, appointment: booked };
   }
   return { error: `Unknown tool: ${name}` };
 }
@@ -104,7 +126,8 @@ app.post('/api/chat', async (req, res) => {
       // ...run each tool, and add each result to the conversation
       for (const call of toolCalls) {
         console.log(`🔧 AI called tool: ${call.name}`);
-        const result = runTool(call.name);
+        const args = JSON.parse(call.arguments);     // the AI's inputs arrive as JSON text
+        const result = runTool(call.name, args);
         input.push({
           type: 'function_call_output',
           call_id: call.call_id,               // links this result to the request

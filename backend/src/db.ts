@@ -34,3 +34,11 @@ export type Appointment = {
 export function getAppointments(): Appointment[] {
   return db.prepare('SELECT * FROM appointments ORDER BY id').all() as Appointment[];
 }
+
+// Save a new appointment and return it (with the id the database gave it)
+export function addAppointment(patient: string, time: string, treatment: string): Appointment {
+  const result = db
+    .prepare('INSERT INTO appointments (patient, time, treatment) VALUES (?, ?, ?)')
+    .run(patient, time, treatment);
+  return { id: Number(result.lastInsertRowid), patient, time, treatment };
+}
