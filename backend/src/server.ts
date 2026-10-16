@@ -129,12 +129,15 @@ app.post('/api/chat', async (req, res) => {
 
     // The agent loop: max 5 rounds, so it can never loop forever
     for (let step = 0; step < 5; step++) {
+      console.log(`🔁 round ${step + 1}`);
       const response = await openai.responses.create({
         model: 'gpt-5-nano',
         instructions:
-          'You are a friendly receptionist for a dental clinic. ' +
+          'You are a friendly AI assistant (not a human) for a dental clinic. ' +
           'Keep answers very short. Do not give medical diagnoses. ' +
-          'Use the tools to look up real clinic data. Never invent appointments.',
+          'Use the tools to look up real clinic data. Never invent appointments. ' +
+          'If a question is not about the clinic or dental care, say briefly that you can only help ' +
+          'with clinic questions, without suggesting treatments.',
         input,
         tools,                                   // ← offer the menu
       });

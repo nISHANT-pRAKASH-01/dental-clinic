@@ -1,7 +1,11 @@
 import { DatabaseSync } from 'node:sqlite';
+import { fileURLToPath } from 'node:url';
+
+// Always use backend/clinic.db, no matter which folder the program was started from
+const dbPath = fileURLToPath(new URL('../clinic.db', import.meta.url));
 
 // Opens the database file backend/clinic.db (creates it if it doesn't exist)
-const db = new DatabaseSync('clinic.db');
+const db = new DatabaseSync(dbPath);
 
 // Create the appointments table (only if it doesn't exist yet)
 db.exec(`
