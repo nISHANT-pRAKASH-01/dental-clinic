@@ -6,7 +6,7 @@ export const knowledge: string[] = [
   'Payment: We accept cash, UPI and all major credit/debit cards. Payment is taken after the treatment.',
   'Insurance: We accept Star Health and HDFC Ergo dental plans. Please bring your insurance card.',
   'Cancellation policy: Please cancel at least 24 hours in advance. Late cancellations may be charged ₹200.',
-  'Location: 12 MG Road, Bengaluru, on the 2nd floor above the pharmacy. Free parking is behind the building.',
+  'Address and location: Our clinic address is 12 MG Road, Bengaluru, on the 2nd floor above the pharmacy (how to find us). Free parking is behind the building.',
   'Root canal aftercare: Avoid chewing on that side for 24 hours. Mild pain for 2-3 days is normal. Call us if swelling increases.',
   'After a filling: Do not eat for 2 hours. Sensitivity to hot and cold for a few days is normal.',
   'Teeth whitening: Takes about 60 minutes. Avoid tea, coffee and red wine for 48 hours afterwards.',
