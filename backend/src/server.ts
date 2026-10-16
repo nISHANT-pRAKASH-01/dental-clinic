@@ -3,7 +3,7 @@ import cors from 'cors';
 import OpenAI from 'openai';  
 import { toResponseInputItems } from 'openai/lib/responses/ResponseInputItems';
 import { addAppointment, findByTime, getAppointments } from './db';
-import { searchKnowledge } from './search';
+import { semanticSearch } from './search';
 
 process.loadEnvFile();
 const openai = new OpenAI(); 
@@ -81,7 +81,7 @@ const tools: OpenAI.Responses.Tool[] = [
 ];
 
 // Runs the tool the AI asked for
-function runTool(name: string, args: Record<string, string>): unknown {
+async function runTool(name: string, args: Record<string, string>): Promise<unknown> {
   if (name === 'get_appointments') return getAppointments();
   if (name === 'get_clinic_hours') {
     return {
@@ -99,7 +99,7 @@ function runTool(name: string, args: Record<string, string>): unknown {
     return { success: true, appointment: booked };
   }
   if (name === 'search_clinic_info') {
-    const results = searchKnowledge(args.query);
+    const results = await semanticSearch(args.query);
     console.log(`   🔎 search "${args.query}" → ${results.length} chunk(s)`);
     if (results.length === 0) return { results: [], note: 'Nothing found. Do not guess; suggest calling the clinic.' };
     return { results };
@@ -155,7 +155,7 @@ app.post('/api/chat', async (req, res) => {
       for (const call of toolCalls) {
         console.log(`🔧 AI called tool: ${call.name}`);
         const args = JSON.parse(call.arguments);     // the AI's inputs arrive as JSON text
-        const result = runTool(call.name, args);
+        const result = await runTool(call.name, args);
         input.push({
           type: 'function_call_output',
           call_id: call.call_id,               // links this result to the request
