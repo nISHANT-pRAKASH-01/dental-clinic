@@ -1,6 +1,7 @@
 // The clinic's knowledge, split into small chunks.
 // Each chunk is about ONE topic, so a search can return just the relevant part.
 export const knowledge: string[] = [
+  'Opening hours: Monday to Friday 9:00 AM - 6:00 PM. Saturday 9:00 AM - 1:00 PM. Closed on Sunday.',
   'Prices: Check-up ₹500. Cleaning ₹1,500. Filling ₹2,500. Root canal ₹8,000. Teeth whitening ₹6,000.',
   'Payment: We accept cash, UPI and all major credit/debit cards. Payment is taken after the treatment.',
   'Insurance: We accept Star Health and HDFC Ergo dental plans. Please bring your insurance card.',

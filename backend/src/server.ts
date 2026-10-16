@@ -38,13 +38,6 @@ const tools: OpenAI.Responses.Tool[] = [
   },
   {
     type: 'function',
-    name: 'get_clinic_hours',
-    description: 'Get the clinic opening hours for each day of the week.',
-    parameters: { type: 'object', properties: {}, required: [], additionalProperties: false },
-    strict: true,
-  },
-  {
-    type: 'function',
     name: 'book_appointment',
     description:
       'Book an appointment for today. Only call this after the patient has given their name, ' +
@@ -65,7 +58,7 @@ const tools: OpenAI.Responses.Tool[] = [
     type: 'function',
     name: 'search_clinic_info',
     description:
-      'Search the clinic information: prices, payment, insurance, cancellation policy, location, ' +
+      'Search the clinic information: opening hours, prices, payment, insurance, cancellation policy, location, ' +
       'parking, aftercare instructions, children and emergencies. Use this before answering any ' +
       'question about the clinic.',
     parameters: {
@@ -83,13 +76,6 @@ const tools: OpenAI.Responses.Tool[] = [
 // Runs the tool the AI asked for
 async function runTool(name: string, args: Record<string, string>): Promise<unknown> {
   if (name === 'get_appointments') return getAppointments();
-  if (name === 'get_clinic_hours') {
-    return {
-      'Monday-Friday': '9:00 AM - 6:00 PM',
-      Saturday: '9:00 AM - 1:00 PM',
-      Sunday: 'Closed',
-    };
-  }
   if (name === 'book_appointment') {
     // Our code enforces the rule: never double-book a slot
     if (findByTime(args.time)) {

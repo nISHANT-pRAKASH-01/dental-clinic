@@ -63,7 +63,7 @@ export async function semanticSearch(query: string, topK = 3): Promise<string[]>
   scored.sort((a, b) => b.score - a.score);                // highest score first
   for (const s of scored.slice(0, topK)) {
     const mark = s.score >= MIN_SCORE ? '✅' : '❌ (below MIN_SCORE, dropped)';
-    console.log(`      ${s.score.toFixed(3)} ${mark}  ${s.chunk.slice(0, 50)}…`);
+    console.error(`      ${s.score.toFixed(3)} ${mark}  ${s.chunk.slice(0, 50)}…`);   // stderr: safe for MCP
   }
   return scored
     .slice(0, topK)

@@ -22,7 +22,7 @@ const { count } = db.prepare('SELECT COUNT(*) AS count FROM appointments').get()
 if (count === 0) {
   const insert = db.prepare('INSERT INTO appointments (patient, time, treatment) VALUES (?, ?, ?)');
   insert.run('Rahul Sharma', '10:00 AM', 'Check-up');
-  insert.run('Priya Singh', '11:30 AM', 'Filling');
+  insert.run('Aparna Chaki', '11:30 AM', 'Filling');
   insert.run('Amit Kumar', '02:00 PM', 'Cleaning');
 }
 
